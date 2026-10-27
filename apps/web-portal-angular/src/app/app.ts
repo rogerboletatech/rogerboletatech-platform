@@ -1,9 +1,29 @@
 import { Component, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { finalize } from 'rxjs';
 import { BoletaService, PassoBoleta, RespostaBoleta } from './boleta.service';
 
 @Component({
   selector: 'app-root',
+  imports: [
+    FormsModule,
+    MatButtonModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatListModule,
+    MatProgressBarModule,
+    MatToolbarModule,
+  ],
   styleUrl: './app.css',
   templateUrl: './app.html',
 })
@@ -31,11 +51,14 @@ export class App {
       });
   }
 
-  protected atualizarPergunta(evento: Event): void {
-    this.pergunta.set((evento.target as HTMLTextAreaElement).value);
+  protected icone(passo: PassoBoleta): string {
+    const d = passo.decision;
+    if (d.startsWith('recusado') || d.startsWith('bloqueada')) return 'block';
+    if (d === 'fallback') return 'warning';
+    return 'check_circle';
   }
 
-  protected corPasso(passo: PassoBoleta): string {
+  protected classe(passo: PassoBoleta): string {
     const d = passo.decision;
     if (d.startsWith('recusado') || d.startsWith('bloqueada')) return 'bloqueio';
     if (d === 'fallback') return 'alerta';

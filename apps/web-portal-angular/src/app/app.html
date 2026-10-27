@@ -1,50 +1,83 @@
-<main>
-  <header>
-    <h1>Console Glass-Box</h1>
-    <p class="subtitulo">Pergunte ao Boleta e veja cada passo da decisão. <span class="aviso">Boleta é um agente de IA.</span></p>
-  </header>
+<mat-toolbar color="primary">
+  <mat-icon>terminal</mat-icon>
+  <span class="titulo">Console Glass-Box</span>
+</mat-toolbar>
 
-  <form (submit)="perguntar(); $event.preventDefault()">
-    <label for="pergunta">Sua pergunta</label>
-    <textarea
-      id="pergunta"
-      rows="3"
-      maxlength="4000"
-      placeholder="Ex.: meu @Scheduled roda em 4 pods, e agora?"
-      [value]="pergunta()"
-      (input)="atualizarPergunta($event)"
-    ></textarea>
-    <button type="submit" [disabled]="carregando() || !pergunta().trim()">
-      {{ carregando() ? 'Pensando...' : 'Perguntar' }}
-    </button>
-  </form>
+<main>
+  <p class="subtitulo">
+    Pergunte ao Boleta e veja cada passo da decisão.
+    <strong>Boleta é um agente de IA.</strong>
+  </p>
+
+  <mat-card appearance="outlined">
+    <mat-card-content>
+      <mat-form-field class="campo">
+        <mat-label>Sua pergunta</mat-label>
+        <textarea
+          matInput
+          rows="3"
+          maxlength="4000"
+          placeholder="Ex.: meu @Scheduled roda em 4 pods, e agora?"
+          [ngModel]="pergunta()"
+          (ngModelChange)="pergunta.set($event)"
+          (keydown.control.enter)="perguntar()"
+        ></textarea>
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions>
+      <button matButton="filled" (click)="perguntar()" [disabled]="carregando() || !pergunta().trim()">
+        <mat-icon>send</mat-icon>
+        {{ carregando() ? 'Pensando...' : 'Perguntar' }}
+      </button>
+      <span class="dica">Ctrl + Enter envia</span>
+    </mat-card-actions>
+    @if (carregando()) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+  </mat-card>
 
   @if (erro(); as mensagem) {
-    <p role="alert" class="erro">{{ mensagem }}</p>
+    <mat-card appearance="outlined" class="erro" role="alert">
+      <mat-card-content>
+        <mat-icon>error</mat-icon> {{ mensagem }}
+      </mat-card-content>
+    </mat-card>
   }
 
   @if (resposta(); as r) {
-    <section class="resposta" [class.bloqueada]="r.bloqueada" [class.fallback]="r.fallback">
-      <p class="autor">{{ r.autor }}</p>
-      <p class="texto">{{ r.resposta }}</p>
-      @if (r.fallback) {
-        <p class="nota">Resposta de contingência: o provedor de LLM não respondeu.</p>
-      }
-    </section>
-
-    <section class="passos" aria-label="Passos da decisão">
-      <h2>Passos</h2>
-      <ol>
-        @for (passo of r.passos; track $index) {
-          <li [class]="corPasso(passo)">
-            <code>{{ passo.step }}</code>
-            <span class="decisao">{{ passo.decision }}</span>
-            @if (passo.detalhe) {
-              <span class="detalhe">{{ passo.detalhe }}</span>
-            }
-          </li>
+    <mat-card appearance="outlined" [class.bloqueada]="r.bloqueada" [class.fallback]="r.fallback">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>smart_toy</mat-icon>
+        <mat-card-title>{{ r.autor }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="texto">{{ r.resposta }}</p>
+        @if (r.fallback) {
+          <p class="nota">Resposta de contingência: o provedor de LLM não respondeu.</p>
         }
-      </ol>
-    </section>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>Passos da decisão</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-list>
+          @for (passo of r.passos; track $index) {
+            <mat-list-item [class]="classe(passo)">
+              <mat-icon matListItemIcon>{{ icone(passo) }}</mat-icon>
+              <span matListItemTitle>
+                <code>{{ passo.step }}</code>
+                <strong class="decisao">{{ passo.decision }}</strong>
+              </span>
+              @if (passo.detalhe) {
+                <span matListItemLine>{{ passo.detalhe }}</span>
+              }
+            </mat-list-item>
+          }
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
   }
 </main>

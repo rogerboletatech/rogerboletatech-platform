@@ -1,77 +1,28 @@
-:root { color-scheme: light dark; }
-
 main {
   max-width: 44rem;
   margin: 0 auto;
   padding: 1rem;
-  font-family: system-ui, sans-serif;
-  background: Canvas;
-  color: CanvasText;
-  min-height: 100vh;
-  box-sizing: border-box;
-}
-
-h1 { margin: 0 0 0.25rem; font-size: 1.6rem; }
-h2 { font-size: 1.1rem; margin: 1.5rem 0 0.5rem; }
-.subtitulo { margin: 0 0 1.25rem; opacity: 0.7; }
-.aviso { font-weight: 600; }
-
-form { display: grid; gap: 0.5rem; }
-label { font-weight: 600; }
-textarea {
-  font: inherit;
-  padding: 0.6rem;
-  border: 1px solid #aaa;
-  border-radius: 6px;
-  resize: vertical;
-  background: Field;
-  color: FieldText;
-}
-button {
-  justify-self: start;
-  padding: 0.5rem 1.1rem;
-  font: inherit;
-  border: 0;
-  border-radius: 6px;
-  background: #1d4ed8;
-  color: #fff;
-  cursor: pointer;
-}
-button:disabled { opacity: 0.5; cursor: default; }
-
-.erro { color: #b91c1c; font-weight: 600; }
-
-.resposta {
-  margin-top: 1.25rem;
-  padding: 1rem;
-  border-left: 4px solid #1d4ed8;
-  background: #f1f5ff;
-  border-radius: 6px;
-}
-.resposta.bloqueada { border-color: #b91c1c; background: #fef2f2; }
-.resposta.fallback { border-color: #b45309; background: #fffbeb; }
-.autor { margin: 0 0 0.4rem; font-size: 0.85rem; opacity: 0.7; }
-.texto { margin: 0; white-space: pre-wrap; }
-.nota { margin: 0.5rem 0 0; font-size: 0.85rem; color: #92400e; }
-
-ol { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.4rem; }
-li {
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.2rem 0.6rem;
-  padding: 0.5rem 0.7rem;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  font-size: 0.9rem;
+  gap: 1rem;
 }
-li.ok { border-left: 4px solid #15803d; }
-li.alerta { border-left: 4px solid #b45309; }
-li.bloqueio { border-left: 4px solid #b91c1c; }
-.decisao { font-weight: 600; }
-.detalhe { grid-column: 1 / -1; color: #666; font-size: 0.8rem; }
 
-@media (prefers-color-scheme: dark) {
-  .resposta { background: #1e293b; }
-  .resposta.bloqueada { background: #3b1d1d; }
-  .resposta.fallback { background: #3a2e12; }
-}
+.titulo { margin-left: 0.5rem; font-weight: 500; }
+.subtitulo { margin: 0.5rem 0 0; opacity: 0.75; }
+
+.campo { width: 100%; }
+mat-card-actions { display: flex; align-items: center; gap: 1rem; }
+button mat-icon { margin-right: 0.25rem; vertical-align: middle; }
+.dica { font-size: 0.8rem; opacity: 0.6; }
+
+.erro { border-color: #b91c1c; }
+.erro mat-icon { color: #b91c1c; vertical-align: middle; }
+
+.bloqueada { border-color: #b91c1c; }
+.fallback { border-color: #b45309; }
+.nota { margin: 0.5rem 0 0; font-size: 0.85rem; color: #b45309; }
+.texto { white-space: pre-wrap; margin: 0; }
+
+mat-list-item.ok mat-icon { color: #15803d; }
+mat-list-item.alerta mat-icon { color: #b45309; }
+mat-list-item.bloqueio mat-icon { color: #b91c1c; }
+.decisao { margin-left: 0.5rem; }

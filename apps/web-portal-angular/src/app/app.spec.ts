@@ -26,7 +26,7 @@ describe('App', () => {
   it('renderiza o título do console', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('h1')?.textContent).toContain('Console Glass-Box');
+    expect(fixture.nativeElement.querySelector('.titulo')?.textContent).toContain('Console Glass-Box');
   });
 
   it('não envia pergunta vazia', () => {
@@ -48,7 +48,7 @@ describe('App', () => {
     const texto = fixture.nativeElement.textContent as string;
     expect(texto).toContain('Use ShedLock.');
     expect(texto).toContain('guarda_entrada');
-    expect(fixture.nativeElement.querySelectorAll('.passos li').length).toBe(2);
+    expect(fixture.nativeElement.querySelectorAll('mat-list-item').length).toBe(2);
   });
 
   it('mostra erro quando o serviço cai', () => {
