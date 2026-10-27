@@ -1,14 +1,19 @@
+:root { color-scheme: light dark; }
+
 main {
   max-width: 44rem;
   margin: 0 auto;
   padding: 1rem;
   font-family: system-ui, sans-serif;
-  color: var(--texto, #1d1d1f);
+  background: Canvas;
+  color: CanvasText;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 h1 { margin: 0 0 0.25rem; font-size: 1.6rem; }
 h2 { font-size: 1.1rem; margin: 1.5rem 0 0.5rem; }
-.subtitulo { margin: 0 0 1.25rem; color: #555; }
+.subtitulo { margin: 0 0 1.25rem; opacity: 0.7; }
 .aviso { font-weight: 600; }
 
 form { display: grid; gap: 0.5rem; }
@@ -19,6 +24,8 @@ textarea {
   border: 1px solid #aaa;
   border-radius: 6px;
   resize: vertical;
+  background: Field;
+  color: FieldText;
 }
 button {
   justify-self: start;
@@ -43,7 +50,7 @@ button:disabled { opacity: 0.5; cursor: default; }
 }
 .resposta.bloqueada { border-color: #b91c1c; background: #fef2f2; }
 .resposta.fallback { border-color: #b45309; background: #fffbeb; }
-.autor { margin: 0 0 0.4rem; font-size: 0.85rem; color: #555; }
+.autor { margin: 0 0 0.4rem; font-size: 0.85rem; opacity: 0.7; }
 .texto { margin: 0; white-space: pre-wrap; }
 .nota { margin: 0.5rem 0 0; font-size: 0.85rem; color: #92400e; }
 
@@ -64,12 +71,7 @@ li.bloqueio { border-left: 4px solid #b91c1c; }
 .detalhe { grid-column: 1 / -1; color: #666; font-size: 0.8rem; }
 
 @media (prefers-color-scheme: dark) {
-  main { --texto: #e5e7eb; }
-  .subtitulo { color: #9ca3af; }
-  textarea { background: #111827; color: #e5e7eb; border-color: #4b5563; }
   .resposta { background: #1e293b; }
   .resposta.bloqueada { background: #3b1d1d; }
   .resposta.fallback { background: #3a2e12; }
-  li { border-color: #374151; }
-  .detalhe { color: #9ca3af; }
 }
