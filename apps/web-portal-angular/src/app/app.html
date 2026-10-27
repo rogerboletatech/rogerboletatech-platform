@@ -1,0 +1,50 @@
+<main>
+  <header>
+    <h1>Console Glass-Box</h1>
+    <p class="subtitulo">Pergunte ao Boleta e veja cada passo da decisão. <span class="aviso">Boleta é um agente de IA.</span></p>
+  </header>
+
+  <form (submit)="perguntar(); $event.preventDefault()">
+    <label for="pergunta">Sua pergunta</label>
+    <textarea
+      id="pergunta"
+      rows="3"
+      maxlength="4000"
+      placeholder="Ex.: meu @Scheduled roda em 4 pods, e agora?"
+      [value]="pergunta()"
+      (input)="atualizarPergunta($event)"
+    ></textarea>
+    <button type="submit" [disabled]="carregando() || !pergunta().trim()">
+      {{ carregando() ? 'Pensando...' : 'Perguntar' }}
+    </button>
+  </form>
+
+  @if (erro(); as mensagem) {
+    <p role="alert" class="erro">{{ mensagem }}</p>
+  }
+
+  @if (resposta(); as r) {
+    <section class="resposta" [class.bloqueada]="r.bloqueada" [class.fallback]="r.fallback">
+      <p class="autor">{{ r.autor }}</p>
+      <p class="texto">{{ r.resposta }}</p>
+      @if (r.fallback) {
+        <p class="nota">Resposta de contingência: o provedor de LLM não respondeu.</p>
+      }
+    </section>
+
+    <section class="passos" aria-label="Passos da decisão">
+      <h2>Passos</h2>
+      <ol>
+        @for (passo of r.passos; track $index) {
+          <li [class]="corPasso(passo)">
+            <code>{{ passo.step }}</code>
+            <span class="decisao">{{ passo.decision }}</span>
+            @if (passo.detalhe) {
+              <span class="detalhe">{{ passo.detalhe }}</span>
+            }
+          </li>
+        }
+      </ol>
+    </section>
+  }
+</main>
