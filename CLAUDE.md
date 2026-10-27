@@ -18,7 +18,7 @@ Monorepo da plataforma @rogerboletatech: Esteira Full Lab + Console Glass-Box + 
 | App | Stack | Status |
 |---|---|---|
 | `apps/ai-agent-service-python` | Python 3.12, FastAPI, LangGraph, OpenTelemetry | esqueleto pronto |
-| `apps/core-service-java` | Java 25, Spring Boot, DDD/Hexagonal, ULID | vazio |
+| `apps/core-service-java` | Java 25, Spring Boot 4, DDD/Hexagonal, ULID | OrderTicket com testes (`./mvnw test`) |
 | `apps/bff-gateway-java` | Java 25, Spring Cloud Gateway | vazio |
 | `apps/orchestrator-camel-java` | Java 25, Apache Camel | vazio |
 | `apps/web-portal-angular` | Angular 22+, Signals | vazio |
