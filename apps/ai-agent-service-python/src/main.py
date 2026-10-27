@@ -1,11 +1,14 @@
 """API do ai-agent-service. Chamada pelo BFF, que propaga o `traceparent` W3C."""
 
+import os
+
 from fastapi import FastAPI, Request
 from opentelemetry.propagate import extract
 from pydantic import BaseModel, Field
 
 from boleta.graph import Passo, construir_grafo
 from boleta.llm import LLM, LLMFake, LLMResiliente
+from boleta.llm_anthropic import LLMAnthropic
 from boleta.telemetry import tracer
 
 
@@ -22,7 +25,6 @@ class RespostaOut(BaseModel):
 
 
 def criar_app(provedor: LLM | None = None) -> FastAPI:
-    # Provedor real ainda em aberto (ficha técnica, seção 9): por padrão, modo simulação.
     llm = LLMResiliente(provedor or LLMFake())
     grafo = construir_grafo(llm)
     app = FastAPI(title="ai-agent-service", version="0.1.0")
@@ -46,4 +48,11 @@ def criar_app(provedor: LLM | None = None) -> FastAPI:
     return app
 
 
-app = criar_app()
+def provedor_padrao() -> LLM:
+    # Claude de verdade só com chave no ambiente. Sem ela, modo simulação (LLMFake).
+    if os.getenv("ANTHROPIC_API_KEY"):
+        return LLMAnthropic()
+    return LLMFake()
+
+
+app = criar_app(provedor_padrao())

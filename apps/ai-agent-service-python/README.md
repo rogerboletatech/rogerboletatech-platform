@@ -15,7 +15,15 @@ python -m venv .venv
 curl -X POST localhost:8000/boleta/perguntar -H "content-type: application/json" -d '{"pergunta":"meu @Scheduled roda em 4 pods"}'
 ```
 
-Por padrão o LLM é o `LLMFake` (modo simulação). O provedor real ainda está em aberto (ficha técnica, seção 9) e entra implementando o Protocol `boleta.llm.LLM`.
+O LLM é escolhido pelo ambiente:
+- Sem `ANTHROPIC_API_KEY`: `LLMFake` (modo simulação, sem custo).
+- Com `ANTHROPIC_API_KEY`: Claude via SDK oficial, modelo `claude-haiku-5-5` (o mais barato). Troque com `BOLETA_MODELO`.
+
+```bash
+ANTHROPIC_API_KEY=... .venv/Scripts/python -m uvicorn main:app --app-dir src
+```
+
+Nunca commite a chave. Ela só vai para o ambiente da sua máquina.
 
 ## Fluxo do grafo
 
