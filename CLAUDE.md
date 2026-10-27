@@ -21,8 +21,8 @@ Monorepo da plataforma @rogerboletatech: Esteira Full Lab + Console Glass-Box + 
 | `apps/core-service-java` | Java 25, Spring Boot 4, DDD/Hexagonal, ULID | OrderTicket com testes (`./mvnw test`) |
 | `apps/bff-gateway-java` | Java 25, Spring Cloud Gateway | vazio |
 | `apps/orchestrator-camel-java` | Java 25, Apache Camel | vazio |
-| `apps/web-portal-angular` | Angular 22+, Signals | vazio |
-| `libs/contracts-specs` | OpenAPI, AsyncAPI (SDD, contract-first) | vazio |
+| `apps/web-portal-angular` | Angular 22, Material, Signals | Console Glass-Box inicial (`ng serve`, proxy para :8000) |
+| `libs/contracts-specs` | OpenAPI, AsyncAPI (SDD, contract-first) | OpenAPI do agente e AsyncAPI planejado |
 
 Python (a partir de `apps/ai-agent-service-python`):
 - testes: `.venv/Scripts/python -m pytest -q`
