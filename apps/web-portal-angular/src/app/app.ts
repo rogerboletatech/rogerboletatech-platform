@@ -9,7 +9,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { finalize } from 'rxjs';
-import { BoletaService, PassoBoleta, RespostaBoleta } from './boleta.service';
+import { BoletaService, PassoBoleta, RespostaFinalBoleta } from './boleta.service';
 
 @Component({
   selector: 'app-root',
@@ -33,7 +33,9 @@ export class App {
   protected readonly pergunta = signal('');
   protected readonly carregando = signal(false);
   protected readonly erro = signal<string | null>(null);
-  protected readonly resposta = signal<RespostaBoleta | null>(null);
+  // Os passos chegam um a um pelo stream, então ficam visíveis antes da resposta final.
+  protected readonly passos = signal<PassoBoleta[]>([]);
+  protected readonly resposta = signal<RespostaFinalBoleta | null>(null);
 
   protected perguntar(): void {
     const texto = this.pergunta().trim();
@@ -42,11 +44,19 @@ export class App {
     }
     this.carregando.set(true);
     this.erro.set(null);
+    this.passos.set([]);
+    this.resposta.set(null);
     this.boleta
-      .perguntar(texto)
+      .perguntarStream(texto)
       .pipe(finalize(() => this.carregando.set(false)))
       .subscribe({
-        next: (r) => this.resposta.set(r),
+        next: (evento) => {
+          if (evento.evento === 'passo') {
+            this.passos.update((atuais) => [...atuais, evento.dados]);
+          } else {
+            this.resposta.set(evento.dados);
+          }
+        },
         error: () => this.erro.set('O serviço do Boleta não respondeu. Ele está no ar?'),
       });
   }

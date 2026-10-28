@@ -5,7 +5,7 @@
 
 <main>
   <p class="subtitulo">
-    Pergunte ao Boleta e veja cada passo da decisão.
+    Pergunte ao Boleta e veja cada passo da decisão, conforme ela acontece.
     <strong>Boleta é um agente de IA.</strong>
   </p>
 
@@ -44,27 +44,14 @@
     </mat-card>
   }
 
-  @if (resposta(); as r) {
-    <mat-card appearance="outlined" [class.bloqueada]="r.bloqueada" [class.fallback]="r.fallback">
-      <mat-card-header>
-        <mat-icon mat-card-avatar>smart_toy</mat-icon>
-        <mat-card-title>{{ r.autor }}</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <p class="texto">{{ r.resposta }}</p>
-        @if (r.fallback) {
-          <p class="nota">Resposta de contingência: o provedor de LLM não respondeu.</p>
-        }
-      </mat-card-content>
-    </mat-card>
-
+  @if (passos().length > 0) {
     <mat-card appearance="outlined">
       <mat-card-header>
         <mat-card-title>Passos da decisão</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <mat-list>
-          @for (passo of r.passos; track $index) {
+          @for (passo of passos(); track passo.ordem) {
             <mat-list-item [class]="classe(passo)">
               <mat-icon matListItemIcon>{{ icone(passo) }}</mat-icon>
               <span matListItemTitle>
@@ -77,6 +64,21 @@
             </mat-list-item>
           }
         </mat-list>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (resposta(); as r) {
+    <mat-card appearance="outlined" [class.bloqueada]="r.bloqueada" [class.fallback]="r.fallback">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>smart_toy</mat-icon>
+        <mat-card-title>{{ r.autor }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="texto">{{ r.resposta }}</p>
+        @if (r.fallback) {
+          <p class="nota">Resposta de contingência: o provedor de LLM não respondeu.</p>
+        }
       </mat-card-content>
     </mat-card>
   }
