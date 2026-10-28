@@ -2,5 +2,8 @@
   "framework": null,
   "buildCommand": "npm run build",
   "outputDirectory": "dist/web-portal-angular/browser",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    { "source": "/boleta/:path*", "destination": "https://ai-agent-service-python.vercel.app/boleta/:path*" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }
