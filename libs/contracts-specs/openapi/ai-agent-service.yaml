@@ -54,6 +54,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErroValidacao'
+  /boleta/perguntar/stream:
+    post:
+      tags: [boleta]
+      operationId: perguntarBoletaStream
+      summary: Faz uma pergunta e recebe os passos conforme acontecem (SSE)
+      description: |
+        Mesmo grafo do endpoint síncrono, mas a resposta é um stream text/event-stream.
+        Um evento `passo` por nó do grafo (formato PassoRegistrado do AsyncAPI), e um
+        evento final `resposta` com o texto e as flags. Cada evento vem em um bloco
+        `event: <nome>` / `data: <json>`, separado por linha em branco.
+      parameters:
+        - $ref: '#/components/parameters/Traceparent'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerguntaIn'
+      responses:
+        '200':
+          description: Stream de eventos SSE do Boleta.
+          content:
+            text/event-stream:
+              schema:
+                type: string
+        '422':
+          description: "Corpo inválido, por exemplo pergunta acima de 4000 caracteres."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroValidacao'
   /health:
     get:
       tags: [saude]

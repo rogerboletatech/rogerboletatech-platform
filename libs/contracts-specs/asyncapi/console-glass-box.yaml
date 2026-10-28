@@ -7,8 +7,8 @@ info:
     Transporte previsto: Server-Sent Events (SSE) via BFF. O contrato de transporte
     fica no BFF; aqui está só o formato das mensagens.
 
-    Status: planejado. Ainda não há produtor implementado. O HTTP síncrono
-    (openapi/ai-agent-service.yaml) continua sendo a fonte de verdade da resposta.
+    Status: produtor implementado em POST /boleta/perguntar/stream (openapi/ai-agent-service.yaml).
+    O HTTP síncrono continua sendo a fonte de verdade da resposta final.
 defaultContentType: application/json
 
 servers:
