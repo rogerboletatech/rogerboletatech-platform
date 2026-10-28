@@ -1,0 +1,28 @@
+main {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 1rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.titulo { margin-left: 0.5rem; font-weight: 500; }
+.subtitulo { margin: 0.5rem 0 0; opacity: 0.75; }
+
+.campo { width: 100%; }
+mat-card-actions { display: flex; align-items: center; gap: 1rem; }
+button mat-icon { margin-right: 0.25rem; vertical-align: middle; }
+.dica { font-size: 0.8rem; opacity: 0.6; }
+
+.erro { border-color: #b91c1c; }
+.erro mat-icon { color: #b91c1c; vertical-align: middle; }
+
+.bloqueada { border-color: #b91c1c; }
+.fallback { border-color: #b45309; }
+.nota { margin: 0.5rem 0 0; font-size: 0.85rem; color: #b45309; }
+.texto { white-space: pre-wrap; margin: 0; }
+
+mat-list-item.ok mat-icon { color: #15803d; }
+mat-list-item.alerta mat-icon { color: #b45309; }
+mat-list-item.bloqueio mat-icon { color: #b91c1c; }
+.decisao { margin-left: 0.5rem; }

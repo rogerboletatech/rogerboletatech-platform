@@ -1,0 +1,143 @@
+openapi: 3.1.0
+info:
+  title: ai-agent-service
+  version: 0.1.0
+  summary: API do serviço de IA. Chamada pelo BFF; casa do agente Boleta.
+  description: |
+    Contrato contract-first (SDD). A implementação em apps/ai-agent-service-python
+    deve bater com este arquivo. Quem muda o contrato muda aqui primeiro.
+
+    O Boleta se declara IA em todas as respostas (campo `autor`).
+    O BFF propaga o cabeçalho `traceparent` (W3C) para o rastreio ponta a ponta.
+# Sem autenticação nesta fase: o serviço roda só em rede interna, atrás do BFF.
+# Autenticação BFF → agente é decisão em aberto; quando decidida, vira ADR e troca este bloco.
+security: []
+
+servers:
+  - url: http://localhost:8000
+    description: Desenvolvimento local
+tags:
+  - name: boleta
+    description: Agente Boleta
+  - name: saude
+    description: Verificação de vida do serviço
+paths:
+  /boleta/perguntar:
+    post:
+      tags: [boleta]
+      operationId: perguntarBoleta
+      summary: Faz uma pergunta ao Boleta
+      description: |
+        Passa pelo grafo: guarda de entrada, busca nas Diretrizes, resposta do LLM
+        (ou fallback determinístico) e guarda de saída. Devolve também os passos
+        da decisão, que alimentam o Console Glass-Box.
+      parameters:
+        - $ref: '#/components/parameters/Traceparent'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerguntaIn'
+            example:
+              pergunta: meu @Scheduled roda em 4 pods, e agora?
+      responses:
+        '200':
+          description: Resposta do Boleta, recusada na entrada ou bloqueada na saída.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RespostaOut'
+        '422':
+          description: "Corpo inválido, por exemplo pergunta acima de 4000 caracteres."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroValidacao'
+  /health:
+    get:
+      tags: [saude]
+      operationId: saude
+      summary: Estado do serviço e do circuit breaker do LLM
+      responses:
+        '200':
+          description: Serviço no ar.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Saude'
+components:
+  parameters:
+    Traceparent:
+      name: traceparent
+      in: header
+      required: false
+      description: Contexto W3C de rastreio (https://www.w3.org/TR/trace-context/).
+      schema:
+        type: string
+        pattern: '^[0-9a-f]{2}-[0-9a-f]{32}-[0-9a-f]{16}-[0-9a-f]{2}$'
+        examples: ['00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01']
+  schemas:
+    PerguntaIn:
+      type: object
+      required: [pergunta]
+      additionalProperties: false
+      properties:
+        pergunta:
+          type: string
+          maxLength: 4000
+    PassoBoleta:
+      type: object
+      required: [step, decision, detalhe]
+      additionalProperties: false
+      properties:
+        step:
+          type: string
+          description: Nome do passo no grafo.
+          enum: [guarda_entrada, busca_diretrizes, responder, guarda_saida]
+        decision:
+          type: string
+          description: |
+            Decisão tomada no passo. Valores: `permitido`, `recusado:<motivo>`,
+            `#NN` (diretrizes achadas), `llm`, `fallback`, `aprovada`, `bloqueada:<motivo>`.
+        detalhe:
+          type: string
+    RespostaOut:
+      type: object
+      required: [resposta, autor, fallback, bloqueada, passos]
+      additionalProperties: false
+      properties:
+        resposta:
+          type: string
+        autor:
+          type: string
+          const: Boleta (agente de IA)
+        fallback:
+          type: boolean
+          description: Verdadeiro quando o LLM ficou indisponível.
+        bloqueada:
+          type: boolean
+          description: Verdadeiro quando a entrada foi recusada ou a saída bloqueada.
+        passos:
+          type: array
+          items:
+            $ref: '#/components/schemas/PassoBoleta'
+    Saude:
+      type: object
+      required: [status, llm_breaker]
+      additionalProperties: false
+      properties:
+        status:
+          type: string
+          const: ok
+        llm_breaker:
+          type: string
+          enum: [fechado, aberto, meio_aberto]
+    ErroValidacao:
+      type: object
+      required: [detail]
+      properties:
+        detail:
+          type: array
+          items:
+            type: object

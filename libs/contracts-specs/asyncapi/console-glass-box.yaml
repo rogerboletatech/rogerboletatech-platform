@@ -1,0 +1,93 @@
+asyncapi: 3.0.0
+info:
+  title: Console Glass-Box
+  version: 0.1.0
+  description: |
+    Eventos do raciocínio do Boleta em tempo real, para o console do front.
+    Transporte previsto: Server-Sent Events (SSE) via BFF. O contrato de transporte
+    fica no BFF; aqui está só o formato das mensagens.
+
+    Status: planejado. Ainda não há produtor implementado. O HTTP síncrono
+    (openapi/ai-agent-service.yaml) continua sendo a fonte de verdade da resposta.
+defaultContentType: application/json
+
+servers:
+  console:
+    host: localhost:8000
+    protocol: http
+    description: Desenvolvimento local (SSE pelo BFF em produção)
+
+channels:
+  boletaPassos:
+    address: boleta.passos.{interacaoId}
+    description: Um evento por passo do grafo, na ordem em que acontece.
+    parameters:
+      interacaoId:
+        description: Identificador da interação (ULID, ordenável no tempo).
+    messages:
+      passoRegistrado:
+        $ref: '#/components/messages/PassoRegistrado'
+
+operations:
+  observarPassos:
+    action: receive
+    channel:
+      $ref: '#/channels/boletaPassos'
+    summary: O console recebe cada passo do Boleta conforme ele acontece.
+
+components:
+  messages:
+    PassoRegistrado:
+      name: PassoRegistrado
+      title: Passo registrado
+      summary: Um passo do grafo terminou com uma decisão.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/PassoRegistrado'
+      examples:
+        - name: busca_feliz
+          payload:
+            interacaoId: 01JEXAMPLE0000000000000000
+            ordem: 2
+            step: busca_diretrizes
+            decision: '#01'
+            detalhe: busca por palavra-chave
+            traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+            emitidoEm: '2026-10-27T10:00:00Z'
+        - name: fallback
+          payload:
+            interacaoId: 01JEXAMPLE0000000000000000
+            ordem: 3
+            step: responder
+            decision: fallback
+            detalhe: circuito aberto
+            traceId: 4bf92f3577b34da6a3ce929d0e0e4736
+            emitidoEm: '2026-10-27T10:00:01Z'
+
+  schemas:
+    PassoRegistrado:
+      type: object
+      required: [interacaoId, ordem, step, decision, detalhe, traceId, emitidoEm]
+      additionalProperties: false
+      properties:
+        interacaoId:
+          type: string
+          description: ULID da interação.
+        ordem:
+          type: integer
+          minimum: 1
+          description: Posição do passo na interação, começando em 1.
+        step:
+          type: string
+          enum: [guarda_entrada, busca_diretrizes, responder, guarda_saida]
+        decision:
+          type: string
+        detalhe:
+          type: string
+        traceId:
+          type: string
+          pattern: '^[0-9a-f]{32}$'
+          description: Mesmo trace W3C que chega do BFF, para ligar ao Grafana.
+        emitidoEm:
+          type: string
+          format: date-time
